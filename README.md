@@ -1,10 +1,13 @@
-# 3D Network Toolbox
+# 3D Network Toolbox - Expanded Version
 
 Using an input pedestrian network and a Digital Elevation/Terrain Model (DEM/DTM), this Python Toolbox for ArcGIS Pro/10.4 or greater implements Tobler’s Hiking Function to enable the calculation of slope-aware travel times for walking travel on a 3D network. Follow [these steps](https://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/basics/use-a-custom-geoprocessing-tool.htm) to add the ```.pyt``` toolbox to your project.
 
 <img width="500" alt="3d_network" src="https://github.com/higgicd/3D_Network_Toolbox/blob/master/assets/img/3D_NetworkToolbox.jpg">
 
 ## Updates
+- May 2022
+  - Fork added with expanded version that includes additional velocity equations and metabolic energy output from Pandolf et al.
+   
 - July 2020
   - pushed an update to the toolbox to fix issues that were preventing it from working correctly
   - added some help xml
