@@ -35,21 +35,33 @@ Given a 2D network and a Digital Elevation/Terrain Model (DTM), this toolbox int
 
 >  *v* = 6exp(-3.5|*m* + 0.05|)
 
-where *m* is the gradient of the terrain, defined as either *tan*(*θ*) with *θ* as the slope of the terrain in degrees or *dh*/*dx* with *dh* and *dx* as the change in height and distance respectively. This results in the following travel time function:
+where *v* is kph, and  *m* is the gradient of the terrain, defined as either *tan*(*θ*) with *θ* as the slope of the terrain in degrees or *dh*/*dx* with *dh* and *dx* as the change in height and distance respectively. This results in the following travel time function:
 
 <img width="500" alt="toblerfunction" src="https://github.com/higgicd/3D_Network_Toolbox/blob/master/assets/img/ToblerFunction.jpg">
 
 The offset in Tobler’s function specifies a maximum walking velocity of 1.67 meters per second (6kph) when walking on a slight downhill gradient of -5%. On flat ground, pedestrian velocity is 1.4 meters per second, or 5kph. Because of the directionality in Tobler's function, walk times are calculated for the From-To (FT) and To-From (TF) directions for network edges.
 
-**Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso (2017)**:
+**Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso (2017)**:<br>
+A modified version of Tobler's function that better approximates empirical crowdsourced hiking data.
 
 > *v* = 4.8exp(-5.3|(*m* × 0.7)+0.03|
 
-**Irmischer and Clarke (2018)**:
+**Irmischer and Clarke (2018)**:<br>
+Equation fitted to hiker data collected via GPS.
 
-> *v* = *f* (0.11 + exp((-*s* + 5)<sup>2</sup>/(2 × 30<sup>2</sup>)) 3.6
+> *v* = *f* (0.11 + exp(-(*s* + 5)<sup>2</sup>/(2 × 30<sup>2</sup>)) 3.6
 
-where *f*=1 for a male hiker on-path and *f*=0.95 for a female hiker on-path, and *s* is percent slope.
+where *v* is m/s, *f*=1 for a male hiker on-path and *f*=0.95 for a female hiker on-path, and *s* is percent slope.
+
+**Tobler 3.5 kph Maximum**:<br>
+A modified version of Tobler's function (see Notarian 2023) that specifies a maximum walking velocity of 3.5 kph at a gradient of -5% (in place of the original equation's 5 kph). Note: experimental, not based on empirical data.
+
+>  *v* = 3.5exp(-3.5|*m* + 0.05|)
+
+**Tobler Urban Adjustment**:<br>
+A modified version of Tobler's function with a correction factor of 0.6 to approximate slower movement within a crowded urban environment. Note: experimental, not based on empirical data.
+
+>  *v* = 6exp(-3.5|*m* + 0.05|)0.8
 
 ### Tool Inputs
 
