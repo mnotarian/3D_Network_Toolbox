@@ -1,6 +1,6 @@
 # 3D Network Toolbox - Expanded Version
 
-Using an input pedestrian network and a Digital Elevation/Terrain Model (DEM/DTM), this Python Toolbox for ArcGIS Pro/10.4 or greater implements Tobler’s Hiking Function to enable the calculation of slope-aware travel times for walking travel on a 3D network. Follow [these steps](https://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/basics/use-a-custom-geoprocessing-tool.htm) to add the ```.pyt``` toolbox to your project.
+Using an input pedestrian network and a Digital Elevation/Terrain Model (DEM/DTM), this Python Toolbox for ArcGIS Pro/10.4 or greater implements Tobler’s Hiking Function and/or other walking velocity equations to enable the calculation of slope-aware travel times for walking travel on a 3D network. Additionally, it also calculates energy expended carrying loads of varying weights along the same network. Follow [these steps](https://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/basics/use-a-custom-geoprocessing-tool.htm) to add the ```.pyt``` toolbox to your project.
 
 <img width="500" alt="3d_network" src="https://github.com/higgicd/3D_Network_Toolbox/blob/master/assets/img/3D_NetworkToolbox.jpg">
 
@@ -51,12 +51,28 @@ The offset in Tobler’s function specifies a maximum walking velocity of 1.67 m
   - ```NO_SLOPE```: A field in the pedestrian network that takes a value of 1 for any edges for which their travel time will be based on an assumed flat plane.  If you would like to use the No Split option, the tool is presently **hard coded** to expect a field ```NO_SLOPE``` in the input 2D network. With ```NO_SLOPE = 1```, these edges still have their height interpolated from the DTM, but these values are not used to calculate their travel time; the 2D travel time is used instead. This is done to maintain network topology when creating a network that uses the geometry of features for elevation in Network Analyst.
 
 ### Tool Outputs
-- **Output Network (3D)**: The output 3D pedestrian network for further analysis. The network has the following new fields. Some fields only appear if the relevant velocity equations are checked in the dialog box:
+- **Output Network (3D)**: The output 3D pedestrian network for further analysis. The network has the following new fields. Some fields are created only if the relevant velocity equations are checked in the dialog box:
   - ```Start_Z```: Start point Z-coordinate of the line interpolated from the DTM, based on its original digitization direction.
   - ```End_Z```: End point Z-coordinate of the line interpolated from the DTM, based on its original digitization direction.
   - ```Max_Z```: Maximum height value of the line interpolated from the DTM.
   - ```Length3D```: 3D length of the line.
-  - ```AvgSlope```: Absolute slope of the line.
+  - ```Avg_Slope```: Absolute slope of the line.
+- **Velocity Fields**
+  - ```TF_MpSTob```: Speed (m/s) along the line segment slope in the To-From direction, based on the original Tobler's Hiking Function.
+  - ```FT_MpSTob```: Speed (m/s) along the line segment slope in the From-To direction, based on the original Tobler's Hiking Function.
+  - ```TF_MpS_OP```: Speed (m/s) along the line segment slope in the To-From direction, based on the original Tobler's Hiking Function with the off path adjustment.
+  - ```FT_MpS_OP```: Speed (m/s) along the line segment slope in the From-To direction, based on the original Tobler's Hiking Function with the off path adjustment.
+  - ```TF_MpS35k```: Speed (m/s) along the line segment slope in the To-From direction, based on Tobler's Hiking Function modified with a maximum velocity of 3.5 kmh.
+  - ```FT_MpS35k```: Speed (m/s) along the line segment slope in the From-To direction, based on Tobler's Hiking Function modified with a maximum velocity of 3.5 kmh.
+  - ```TF_MpSUrb```: Speed (m/s) along the line segment slope in the To-From direction, based on the modified "Urban Adjustment" Tobler's Hiking Function.
+  - ```FT_MpSUrb```: Speed (m/s) along the line segment slope in the From-To direction, based on the modified "Urban Adjustment" Tobler's Hiking Function.
+  - ```TF_MpS_MP```: Speed (m/s) along the line segment slope in the To-From direction, based on Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso (2017).
+  - ```FT_MpS_MP```: Speed (m/s) along the line segment slope in the From-To direction, based on Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso (2017).
+  - ```TF_MpS_ICF```: Speed (m/s) along the line segment slope in the To-From direction, based on Irmischer and Clarke (2018) on-path female hiker.
+  - ```FT_MpS_ICF```: Speed (m/s) along the line segment slope in the From-To direction, based on Irmischer and Clarke (2018) on-path female hiker.
+  - ```TF_MpS_ICM```: Speed (m/s) along the line segment slope in the To-From direction, based on Irmischer and Clarke (2018) on-path male hiker.
+  - ```FT_MpS_ICM```: Speed (m/s) along the line segment slope in the From-To direction, based on Irmischer and Clarke (2018) on-path male hiker.
+- **Time Fields**
   - ```FT_MIN_2D```: Walk time in minutes to traverse the line segment in the From-To direction, based on the 2D length of the line and the flat-ground walking speed of about 5kph.
   - ```TF_MIN_2D```: Walk time in minutes to traverse the line segment in the To-From direction, based on the 2D length of the line and the flat-ground walking speed of about 5kph.
   - ```FT_MIN_3D```: Walk time in minutes to traverse the line segment in the From-To direction, based on the 3D length of the line and an assumed walking velocity based on the slope of the line segment derived from the original Tobler's Hiking Function ((```End_Z```-```Start_Z```)/2D length of the line).
@@ -73,10 +89,8 @@ The offset in Tobler’s function specifies a maximum walking velocity of 1.67 m
   - ```TF_MIN_ICF```: Walk time in minutes to traverse the line segment in the To-From direction, based on the 3D length of the line and an assumed walking velocity based on the slope of the line segment derived from Irmischer and Clarke (2018) on-path female hiker ((```End_Z```-```Start_Z```)/2D length of the line).
   - ```FT_MIN_ICM```: Walk time in minutes to traverse the line segment in the From-To direction, based on the 3D length of the line and an assumed walking velocity based on the slope of the line segment derived from Irmischer and Clarke (2018) on-path male hiker ((```Start_Z```-```End_Z```)/2D length of the line).
   - ```TF_MIN_ICM```: Walk time in minutes to traverse the line segment in the To-From direction, based on the 3D length of the line and an assumed walking velocity based on the slope of the line segment derived from Irmischer and Clarke (2018) on-path male hiker ((```End_Z```-```Start_Z```)/2D length of the line).
-  - **Metabolic Energy**: Energy required to traverse the line segment will be output in kcals for every walking velocity and load weight input. In each field, #LoadMass# and #BodyMass# will be represented by the entered values. 
- 
-    - Ex., ```FTSt_#LoadMass#_#BodyMass#``` becomes ```FTSt_12_65``` for a 65 kg individual carrying a 12 kg load.
-    
+- **Metabolic Energy Fields**: Energy required to traverse the line segment will be output in kcals for every walking velocity and load weight input. In each field, #LoadMass# and #BodyMass# will be represented by the entered values. For example, ```FTSt_#LoadMass#_#BodyMass#``` becomes ```FTSt_12_65``` for a 65 kg individual carrying a 12 kg load.
+
   - ```FTSt_#LoadMass#_#BodyMass#```: Kcals to traverse the line segment in the From-To direction using the original Tobler's Hiking Function.
   - ```TFSt_#LoadMass#_#BodyMass#```: Kcals to traverse the line segment in the To-From direction using the original Tobler's Hiking Function. 
   - ```FT35_#LoadMass#_#BodyMass#```: Kcals to traverse the line segment in the From-To direction using Tobler's Hiking Function modified with a maximum velocity of 3.5 kmh.
