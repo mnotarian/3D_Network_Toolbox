@@ -63,9 +63,24 @@ A modified version of Tobler's function with a correction factor of 0.6 to appro
 
 >  *v* = 6exp(-3.5|*m* + 0.05|)0.8
 
+<img width="700" alt="equations" src="https://github.com/mnotarian/3D_Network_Toolbox/blob/8e91b500459a71e48a09bc39ac69f09228b9b35c/assets/img/Equations.jpg">
+
+**Pandolf Load Carriage Equation**:<br>
+Metabolic energy costs are calculated using the Pandolf load carriage equation (Pandolf, Givoni and Goldman 1977).
+
+> *M* = 1.5*W* + 2(*W* + *L*) (*L* / *W*)<sup>2</sup> + *η*(*W* + *L*)(1.5*V* <sup>2</sup> + 0.35*VS*)
+
+Output (*M*) is in watts, where *W* is the individual body mass (kg), *L* is the carried load (kg), *V* is walking speed (m/s), *S* is slope (percent), and *η* a terrain factor. The output is transformed into calories (kcals) by converting to kcals/min (watts × 0.014330754 = kcals/min) and then multiplying these values by the segment time cost as derived using the walking equations.
+
+For all negative gradients, a correction factor proposed by Santee et al. (2003) is subtracted from the Pandolf equation:
+
+> *CF* = -*η*[ ((*G*(*M*+*L*)*V*) / 3.5) – ((*W*+*L*) (*G*+6)<sup>2</sup> / *W*) + (25*V* <sup>2</sup>) ]
+
+where *η* is a terrain factor. In the current version, *η* is set to 1 represent movement on paved surfaces.
+
 ### Tool Inputs
 
-<img width="550" alt="toolcapture" src="https://github.com/mnotarian/3D_Network_Toolbox/blob/6569d1817b860344cae801a00a91601cbd08616a/assets/img/ToolCapture_scaled.JPG">
+<img width="650" alt="toolcapture" src="https://github.com/mnotarian/3D_Network_Toolbox/blob/6569d1817b860344cae801a00a91601cbd08616a/assets/img/ToolCapture_scaled.JPG">
 
 - **Input Surface**: Digital elevation/terrain model.
 - **Input Network (2D)**: The input planar pedestrian network. Can be obtained from any number of sources. The OSMnx tool (Boeing, 2017) makes the collection and preparation of OpenStreetMap networks particularly easy.
@@ -144,6 +159,14 @@ Boeing, G. (2017). OSMnx: New methods for acquiring, constructing, analyzing, an
 
 Higgins, C. (2019). A 4D spatio-temporal approach to modelling land value uplift from rapid transit in high density and topographically-rich cities. *Landscape and Urban Planning*. *185*, 68-82. DOI: [10.1016/j.landurbplan.2018.12.011](https://doi.org/10.1016/j.landurbplan.2018.12.011)
 
+Irmischer, I., and K. Clarke. (2018). Measuring and modeling the speed of human navigation. *Cartography and Geographic Information Science* 45, 177–186. DOI: [10.1080/15230406.2017.1292150](https://doi.org/10.1080/15230406.2017.1292150)
+
+Márquez-Pérez, J., I. Vallejo-Villalta, and J.I. Álvarez-Francoso. (2017). Estimated travel time for walking trails in natural areas. *Geografisk Tidsskrift-Danish Journal of Geography* 117, 53–62. DOI: [10.1080/00167223.2017.1316212](https://doi.org/10.1080/00167223.2017.1316212)
+
 Notarian, M. (2023). A Spatial Network Analysis of Water Distribution from Public Fountains in Pompeii. *American Journal of Archaeology*, 127.1 (forthcoming)
+
+Pandolf, K.B., B. Givoni, and R.F. Goldman. (1977). “Predicting energy expenditure with loads while standing or walking very slowly.” Journal of Applied Physiology 43,  577–81.
+
+Santee, W.R., L.A. Blanchard, K.L. Speckman, J.A. Gonzalez, and R.F. Wallace. (2003). Load Carriage Model Development and Testing with Field Data. Technical Note No. ADA#415788. Natick, MA: Army Research Institute of Environmental Medicine.
 
 Tobler, W. (1993). Three presentations on geographical analysis and modeling: Non-isotropic geographic modeling speculations on the geometry of geography global spatial analysis. *National center for geographic information and analysis*. 93(1).
