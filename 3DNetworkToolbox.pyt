@@ -1,9 +1,12 @@
 # 3D Network Toolbox for ArcGIS 10.x
+    # Originally Created by:
     # Christopher D. Higgins
     # Jimmy Chan
     # Department of Land Surveying and Geo-Informatics
     # The Hong Kong Polytechnic University
-    # Expanded by Matthew Notarian
+    # Adapted for use with multiple velocity equations and metabolic energy by: 
+    # Matthew Notarian
+    # Department of History and Classics
     # Hiram College
     
 import arcpy, os
@@ -92,7 +95,7 @@ class Network2DTo3D(object):
         
         param7 = arcpy.Parameter(
             displayName="Enter Multiple Load Weights (kg)",
-            name="Vessel",
+            name="Carried_Load",
             datatype="GPValueTable",
             parameterType="Required",
             direction="Input",
@@ -109,7 +112,7 @@ class Network2DTo3D(object):
             multiValue=True)
 
         param8.filter.type = "ValueList"
-        param8.filter.list = ['Standard Tobler', 'Marquez-Perez et al.', 'Irmischer and Clarke Male On-Path', 'Irmischer and Clarke Female On-Path', 'Tobler 3.5 kmh max', 'Tobler Urban Adjustment']
+        param8.filter.list = ['Standard Tobler', 'Marquez-Perez et al.', 'Irmischer and Clarke Male On-Path', 'Irmischer and Clarke Female On-Path', 'Tobler 3.5 kph max', 'Tobler Urban Adjustment']
         
         params = [param0, param1, param2, param3, param4, param5, param6, param7, param8]
         return params
@@ -148,10 +151,10 @@ class Network2DTo3D(object):
         body_mass = parameters[6].value
         loadlist = parameters[7].value
         import itertools
-        veslist = list(itertools.chain.from_iterable(loadlist))
-        vessel_label = [int(n) for n in veslist]
+        carriedloadlist = list(itertools.chain.from_iterable(loadlist))
+        load_label = [int(n) for n in carriedloadlist]
         arcpy.AddMessage("Using body weight: {0}".format(body_mass))
-        arcpy.AddMessage("Using load weights: {0}kg".format(vessel_label))
+        arcpy.AddMessage("Using load weights: {0}kg".format(load_label))
         search_radius = 0.001
         mass_label = int(parameters[6].value)
         vlist = parameters[8].valueAsText
@@ -172,7 +175,7 @@ class Network2DTo3D(object):
             icf = "icf"
         else: 
             icf = "no"
-        if "Tobler 3.5 kmh max" in vlist:
+        if "Tobler 3.5 kph max" in vlist:
             three5 = "35"
         else: 
             three5 = "no"
@@ -206,10 +209,10 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "TF_MIN_3D", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpSTob", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpSTob", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FTStL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TFStL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FTSt_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TFSt_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass
             if three5 == "35":
@@ -217,10 +220,10 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "FT_MIN_35k", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpS35k", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpS35k", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FT35L{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TF35L{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FT35_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TF35_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass
             if ur == "ur":
@@ -228,10 +231,10 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "FT_MIN_Urb", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpSUrb", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpSUrb", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FTURL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TFURL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FTUR_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TFUR_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass
             if mp == "mp":
@@ -239,10 +242,10 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "FT_MIN_MP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpS_MP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpS_MP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FTMPL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TFMPL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FTMP_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TFMP_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass
             if icf == "icf":
@@ -250,10 +253,10 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "FT_MIN_ICF", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpS_ICF", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpS_ICF", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FTIFL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TFIFL{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FTIF_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TFIF_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass
             if icm == "im":
@@ -261,16 +264,12 @@ class Network2DTo3D(object):
                 arcpy.AddField_management(input_fc, "FT_MIN_ICM", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "TF_MpS_ICM", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
                 arcpy.AddField_management(input_fc, "FT_MpS_ICM", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "FTIML{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-                for llabel in vessel_label:
-                    arcpy.AddField_management(input_fc, "TFIML{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "FTIM_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+                for llabel in load_label:
+                    arcpy.AddField_management(input_fc, "TFIM_{0}_{1}".format(llabel, mass_label), "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             else:
                 pass 
-            arcpy.AddField_management(input_fc, "TF_MpS_OP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-            arcpy.AddField_management(input_fc, "FT_MpS_OP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-            arcpy.AddField_management(input_fc, "TF_MIN_OP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
-            arcpy.AddField_management(input_fc, "FT_MIN_OP", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
             
             # Calculate walk time fields
             arcpy.CalculateField_management(input_fc, "SlopePctTF", "(((!Start_Z!-!End_Z!)/(!shape.length!))*100)", "PYTHON", "") 
@@ -320,133 +319,131 @@ class Network2DTo3D(object):
                 arcpy.CalculateField_management(input_fc, "TF_MpS_ICM", "(0.11+(math.exp((-((!SlopePctTF! + 5)**2) / 1800.0))))", "PYTHON", "")
                 arcpy.CalculateField_management(input_fc, "FT_MpS_ICM", "(0.11+(math.exp((-((!SlopePctFT! + 5)**2) / 1800.0))))", "PYTHON", "")
             else: 
-                pass
-            arcpy.CalculateField_management(input_fc, "TF_MpS_OP", "((6*(math.exp((-3.5)*(math.fabs((!Start_Z!-!End_Z!)/(!shape.length!)+0.05)))))*0.6)/3.6", "PYTHON", "")
-            arcpy.CalculateField_management(input_fc, "FT_MpS_OP", "((6*(math.exp((-3.5)*(math.fabs((!End_Z!-!Start_Z!)/(!shape.length!)+0.05)))))*0.6)/3.6", "PYTHON", "")    
+                pass  
             if st == "st":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpSTob!, !TF_MIN_3D!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TFStL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TFSt_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                     arcpy.AddMessage("Calculating Standard Tobler Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpSTob!, !FT_MIN_3D!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FTStL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FTSt_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
             if mp == "mp":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpS_MP!, !TF_MIN_MP!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TFMPL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TFMP_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                     arcpy.AddMessage("Calculating Marquez-Perez Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpS_MP!, !FT_MIN_MP!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FTMPL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FTMP_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
             if icm == "im":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpS_ICM!, !TF_MIN_ICM!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TFIML{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TFIM_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                     arcpy.AddMessage("Calculating Irmischer-Clarke Male on-path Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpS_ICM!, !FT_MIN_ICM!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FTIML{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FTIM_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
             if icf == "icf":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpS_ICF!, !TF_MIN_ICF!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TFIFL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock)
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TFIF_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock)
                     arcpy.AddMessage("Calculating Irmischer-Clarke Female on-path Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpS_ICF!, !FT_MIN_ICF!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FTIFL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FTIF_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
             if three5 == "35":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpS35k!, !TF_MIN_35k!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TF35L{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
-                    arcpy.AddMessage("Calculating Tobler 3.5 kmh max adjustment Calories with load weight {0}kg".format(loadlabel))
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TF35_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                    arcpy.AddMessage("Calculating Tobler 3.5 kph max adjustment Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpS35k!, !FT_MIN_35k!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FT35L{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FT35_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
             if ur == "ur":
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctTF!, !TF_MpSUrb!, !TF_MIN_Urb!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "TFUrL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "TFUR_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                     arcpy.AddMessage("Calculating  Tobler Urban Adjustment Calories with load weight {0}kg".format(loadlabel))
                 
-                for nload, loadlabel in zip(veslist, vessel_label):
+                for nload, loadlabel in zip(carriedloadlist, load_label):
                     expression = "calcSlope(!SlopePctFT!, !FT_MpSUrb!, !FT_MIN_Urb!, {0}, {1} )".format(body_mass, nload)
-                    codeblock = """def calcSlope(slope, time, minutes, bmass, load):
+                    codeblock = """def calcSlope(slope, speed, minutes, bmass, load):
                         if slope <= 0:
-                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time * slope))))-(((( slope ) * (bmass + load) * ( time )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( time**2))))* 0.014330754)*minutes           
+                            return ((((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed * slope))))-(((( slope ) * (bmass + load) * ( speed )) / 3.5 ) - (((bmass + load) * (( slope+ 6)**2) ) / 65) + (25 * ( speed**2))))* 0.014330754)*minutes           
                         else:
-                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( time**2)+(0.35* time*slope))))* 0.014330754)*minutes"""
-                    arcpy.CalculateField_management(input_fc, "FTUrL{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
+                            return (((1.5*bmass)+( 2.0*(bmass+load) * ( ( load/bmass) **2 ) ) + (1*(bmass+load) * (1.5*( speed**2)+(0.35* speed*slope))))* 0.014330754)*minutes"""
+                    arcpy.CalculateField_management(input_fc, "FTUR_{0}_{1}".format(loadlabel, mass_label), expression, "PYTHON", codeblock) 
                 pass
 
         # step 1 - interpolate shape
