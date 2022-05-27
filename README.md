@@ -29,7 +29,9 @@ With an input 2D network and a DEM/DTM, this tool performs several steps:
 Options are given to control the granularity of results and specify any edges you do not want to be split or not have slope-aware travel times. See the detailed explanation below. Original tool applied in [Higgins (2019)](https://doi.org/10.1016/j.landurbplan.2018.12.011). Expanded tool applied in Notarian (forthcoming 2023). If you use this for research purposes, please cite these papers.
 
 ## Detailed Workflow
-Given a 2D network and a Digital Elevation/Terrain Model (DTM), this toolbox interpolates the 3D shape of the network on the DTM. The tool then splits the network into smaller segments and determines the average slope of these segments based on their start and end point XYZ-coordinates. 3D lengths for each line are also interpolated. Next, the tool estimates the travel time in minutes to traverse the segment given the average slope using Tobler’s (1993) Hiking Function:
+Given a 2D network and a Digital Elevation/Terrain Model (DTM), this toolbox interpolates the 3D shape of the network on the DTM. The tool then splits the network into smaller segments and determines the average slope of these segments based on their start and end point XYZ-coordinates. 3D lengths for each line are also interpolated. Next, the tool estimates the travel time in minutes to traverse the segment given the average slope using various walking equations. These are briefly described below.
+
+**Tobler’s (1993) Hiking Function**:
 
 >  *v* = 6exp(-3.5|*m* + 0.05|)
 
@@ -38,6 +40,16 @@ where *m* is the gradient of the terrain, defined as either *tan*(*θ*) with *θ
 <img width="500" alt="toblerfunction" src="https://github.com/higgicd/3D_Network_Toolbox/blob/master/assets/img/ToblerFunction.jpg">
 
 The offset in Tobler’s function specifies a maximum walking velocity of 1.67 meters per second (6kph) when walking on a slight downhill gradient of -5%. On flat ground, pedestrian velocity is 1.4 meters per second, or 5kph. Because of the directionality in Tobler's function, walk times are calculated for the From-To (FT) and To-From (TF) directions for network edges.
+
+**Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso (2017)**:
+
+> *v* = 4.8exp(-5.3|(*m* × 0.7)+0.03|
+
+**Irmischer and Clarke (2018)**:
+
+> *v* = *f* (0.11 + exp((-*s* + 5)<sup>2</sup>/(2 × 30<sup>2</sup>)) 3.6
+
+where *f*=1 for a male hiker on-path and *f*=0.95 for a female hiker on-path, and *s* is percent slope.
 
 ### Tool Inputs
 
