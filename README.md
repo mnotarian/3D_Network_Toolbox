@@ -165,7 +165,7 @@ Márquez-Pérez, J., I. Vallejo-Villalta, and J.I. Álvarez-Francoso. (2017). Es
 
 Notarian, M. (2023). A Spatial Network Analysis of Water Distribution from Public Fountains in Pompeii. *American Journal of Archaeology*, 127.1 (forthcoming)
 
-Pandolf, K.B., B. Givoni, and R.F. Goldman. (1977). “Predicting energy expenditure with loads while standing or walking very slowly.” Journal of Applied Physiology 43,  577–81.
+Pandolf, K.B., B. Givoni, and R.F. Goldman. (1977). “Predicting energy expenditure with loads while standing or walking very slowly.” *Journal of Applied Physiology* 43,  577–81.
 
 Santee, W.R., L.A. Blanchard, K.L. Speckman, J.A. Gonzalez, and R.F. Wallace. (2003). Load Carriage Model Development and Testing with Field Data. Technical Note No. ADA#415788. Natick, MA: Army Research Institute of Environmental Medicine.
 
