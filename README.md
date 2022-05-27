@@ -6,7 +6,7 @@ Using an input pedestrian network and a Digital Elevation/Terrain Model (DEM/DTM
 
 ## Updates
 - May 2022
-  - Fork added with expanded version that includes additional velocity equations (Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso [2017], Irsmischer and Clarke [2018], modified Toblers) and metabolic energy output from Pandolf, Givoni and Goldman 1977 with Santee et al. (2003) correction factor for negative gradients
+  - Fork added with expanded version that includes additional velocity equations (Márquez-Pérez, Vallejo-Villalta, and Álvarez-Francoso [2017], Irsmischer and Clarke [2018], modified Toblers) and metabolic energy output from Pandolf, Givoni and Goldman (1977) with Santee et al. (2003) correction factor for negative gradients
    
 - July 2020
   - pushed an update to the toolbox to fix issues that were preventing it from working correctly
