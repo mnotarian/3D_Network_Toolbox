@@ -297,8 +297,6 @@ class Network2DTo3D(object):
                 arcpy.CalculateField_management(input_fc, "FT_MpSUrb", "((6*(math.exp((-3.5)*(math.fabs((!End_Z!-!Start_Z!)/(!shape.length!)+0.05)))))*0.8)/3.6", "PYTHON", "")
             else:
                 pass
-            arcpy.CalculateField_management(input_fc, "TF_MIN_OP", "(!Length3D!/(((6*(math.exp((-3.5)*(math.fabs((!Start_Z!-!End_Z!)/(!shape.length!)+0.05)))))*.6)*1000))*60", "PYTHON", "")
-            arcpy.CalculateField_management(input_fc, "FT_MIN_OP", "(!Length3D!/(((6*(math.exp((-3.5)*(math.fabs((!End_Z!-!Start_Z!)/(!shape.length!)+0.05)))))*.6)*1000))*60", "PYTHON", "")
             if mp == "mp":
                 arcpy.CalculateField_management(input_fc, "TF_MIN_MP", "(!Length3D!/((4.8 * (math.exp(-5.3*(math.fabs((( ((!Start_Z! - !End_Z!)/!shape.length!) ) * 0.7)+0.03)))))*1000))*60", "PYTHON", "")
                 arcpy.CalculateField_management(input_fc, "FT_MIN_MP", "(!Length3D!/((4.8 * (math.exp(-5.3*(math.fabs((( ((!End_Z! - !Start_Z!)/!shape.length!) ) * 0.7)+0.03)))))*1000))*60", "PYTHON", "")
