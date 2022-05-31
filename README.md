@@ -80,7 +80,7 @@ where *η* is a terrain factor. In the current version, *η* is set to 1 represe
 
 ### Tool Inputs
 
-<img width="650" alt="toolcapture" src="https://github.com/mnotarian/3D_Network_Toolbox/blob/6569d1817b860344cae801a00a91601cbd08616a/assets/img/ToolCapture_scaled.JPG">
+<img width="650" alt="toolcapture" src="https://github.com/mnotarian/3D_Network_Toolbox/blob/ff693ef804d1aaf77101523714f6460ca9610e94/assets/img/ToolCapture_scaled.JPG">
 
 - **Input Surface**: Digital elevation/terrain model.
 - **Input Network (2D)**: The input planar pedestrian network. Can be obtained from any number of sources. The OSMnx tool (Boeing, 2017) makes the collection and preparation of OpenStreetMap networks particularly easy.
