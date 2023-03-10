@@ -159,7 +159,7 @@ Irmischer, I., and K. Clarke. (2018). Measuring and modeling the speed of human 
 
 Márquez-Pérez, J., I. Vallejo-Villalta, and J.I. Álvarez-Francoso. (2017). Estimated travel time for walking trails in natural areas. *Geografisk Tidsskrift-Danish Journal of Geography* 117, 53–62. DOI: [10.1080/00167223.2017.1316212](https://doi.org/10.1080/00167223.2017.1316212)
 
-Notarian, M. (2023). A Spatial Network Analysis of Water Distribution from Public Fountains in Pompeii. *American Journal of Archaeology*, 127.1 (forthcoming)
+Notarian, M. (2023). A Spatial Network Analysis of Water Distribution from Public Fountains in Pompeii. *American Journal of Archaeology* 127.1, 85-118. DOI: [10.1086/722233](https://doi.org/10.1086/722233) 
 
 Pandolf, K.B., B. Givoni, and R.F. Goldman. (1977). “Predicting energy expenditure with loads while standing or walking very slowly.” *Journal of Applied Physiology* 43,  577–81.
 
